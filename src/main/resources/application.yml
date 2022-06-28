@@ -2,15 +2,24 @@ spring:
   cloud:
     gateway:
       routes:
-      - id: transaction-module
-        uri: http://localhost:8081/
-        predicates:
-        - Path=/transaction/**
-      - id: product-module
-        uri: http://localhost:8082/
-        predicates:
-        - Path=/product/**
-      - id: customer-module
-        uri: http://localhost:8083/
-        predicates:
-        - Path=/customer/**
+        - id: transaction-module
+          uri: http://localhost:8081/
+          filters:
+            - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+          predicates:
+            - Path=/transaction/**
+            - Method=POST,GET,PUT
+        - id: product-module
+          uri: http://localhost:8082/
+          predicates:
+            - Path=/product/**
+            - Method=POST,GET,PUT
+          filters:
+            - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+        - id: customer-module
+          uri: http://localhost:8083/
+          predicates:
+            - Path=/customer/**
+            - Method=POST,GET,PUT,OPTIONS
+          filters:
+            - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
